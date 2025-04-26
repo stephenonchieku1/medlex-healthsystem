@@ -1,5 +1,6 @@
 
 import { CircleCheck, Heart, Clock, Globe, Brain, Zap, Microchip, AtomIcon } from "lucide-react";
+import React from "react";
 
 const Features = () => {
   const features = [
