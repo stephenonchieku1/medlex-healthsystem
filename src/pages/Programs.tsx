@@ -12,7 +12,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import ProgramForm from "@/components/programs/ProgramForm";
+import ProgramForm from "../components/programs/ProgramForm";
 
 // Define Program type
 type Program = {
