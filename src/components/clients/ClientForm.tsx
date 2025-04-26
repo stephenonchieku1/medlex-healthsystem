@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,7 @@ interface ClientFormProps {
     last_name: string;
     date_of_birth: string;
     gender: string;
-    contact_number?: string;
+    contact_number: string;
     email?: string;
     address?: string;
   }) => void;
@@ -20,7 +19,7 @@ interface ClientFormProps {
     last_name: string;
     date_of_birth: string;
     gender: string;
-    contact_number?: string;
+    contact_number: string;
     email?: string;
     address?: string;
   };
@@ -47,6 +46,7 @@ const ClientForm = ({ onSubmit, initialData }: ClientFormProps) => {
     if (!formData.last_name.trim()) newErrors.last_name = "Last name is required";
     if (!formData.date_of_birth) newErrors.date_of_birth = "Date of birth is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.contact_number.trim()) newErrors.contact_number = "Contact number is required";
     
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
@@ -67,7 +67,12 @@ const ClientForm = ({ onSubmit, initialData }: ClientFormProps) => {
     if (!validate()) return;
     
     setIsSubmitting(true);
-    onSubmit(formData);
+    // Format the date to YYYY-MM-DD
+    const formattedData = {
+      ...formData,
+      date_of_birth: new Date(formData.date_of_birth).toISOString().split('T')[0],
+    };
+    onSubmit(formattedData);
     setIsSubmitting(false);
   };
 
@@ -131,29 +136,31 @@ const ClientForm = ({ onSubmit, initialData }: ClientFormProps) => {
         </div>
       </div>
       
-      <div>
-        <Label htmlFor="contact_number" className="text-white">Contact Number</Label>
-        <Input 
-          id="contact_number" 
-          name="contact_number"
-          value={formData.contact_number} 
-          onChange={handleChange}
-          className="bg-slate-700 border-slate-600 text-white mt-1"
-        />
-        {errors.contact_number && <p className="text-red-400 text-sm mt-1">{errors.contact_number}</p>}
-      </div>
-      
-      <div>
-        <Label htmlFor="email" className="text-white">Email</Label>
-        <Input 
-          id="email" 
-          name="email"
-          type="email"
-          value={formData.email} 
-          onChange={handleChange}
-          className="bg-slate-700 border-slate-600 text-white mt-1"
-        />
-        {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="contact_number" className="text-white">Contact Number</Label>
+          <Input 
+            id="contact_number" 
+            name="contact_number"
+            value={formData.contact_number} 
+            onChange={handleChange}
+            className="bg-slate-700 border-slate-600 text-white mt-1"
+          />
+          {errors.contact_number && <p className="text-red-400 text-sm mt-1">{errors.contact_number}</p>}
+        </div>
+        
+        <div>
+          <Label htmlFor="email" className="text-white">Email</Label>
+          <Input 
+            id="email" 
+            name="email"
+            type="email"
+            value={formData.email} 
+            onChange={handleChange}
+            className="bg-slate-700 border-slate-600 text-white mt-1"
+          />
+          {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
+        </div>
       </div>
       
       <div>
