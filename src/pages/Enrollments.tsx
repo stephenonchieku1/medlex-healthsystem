@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Brain, ArrowLeft, Search } from "lucide-react";
+import { Brain, ArrowLeft, Search, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { 
   Table, 
@@ -13,57 +12,83 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-
-// Define types
-type Enrollment = {
-  id: number;
-  client_id: number;
-  program_id: number;
-  enrollment_date: string;
-  status: string;
-  client: {
-    id: number;
-    first_name: string;
-    last_name: string;
-  };
-  program: {
-    id: number;
-    name: string;
-  };
-};
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { getEnrollments, deleteEnrollment, Enrollment } from "@/services/api";
 
 const Enrollments = () => {
   const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [enrollmentToDelete, setEnrollmentToDelete] = useState<Enrollment | null>(null);
 
   // Fetch enrollments
-  useEffect(() => {
-    const fetchEnrollments = async () => {
-      try {
-        const response = await fetch("http://localhost:4000/api/v1/enrollments");
-        if (!response.ok) throw new Error("Failed to fetch enrollments");
-        const data = await response.json();
-        setEnrollments(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching enrollments:", error);
-        setIsLoading(false);
-      }
-    };
+  const fetchEnrollments = async () => {
+    try {
+      const data = await getEnrollments();
+      setEnrollments(data);
+      setIsLoading(false);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching enrollments:", error);
+      setError("Failed to load enrollments");
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEnrollments();
   }, []);
 
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteEnrollment(id);
+      // Update the UI immediately by filtering out the deleted enrollment
+      setEnrollments(prevEnrollments => prevEnrollments.filter(e => e.id !== id));
+      setEnrollmentToDelete(null);
+      setError(null);
+    } catch (error) {
+      console.error("Error deleting enrollment:", error);
+      setError("Failed to delete enrollment");
+      setEnrollmentToDelete(null);
+    }
+  };
+
   // Filter enrollments based on search query
   const filteredEnrollments = enrollments.filter(enrollment => {
+    if (!enrollment.client || !enrollment.health_program) return false;
+    
     const clientName = `${enrollment.client.first_name} ${enrollment.client.last_name}`.toLowerCase();
-    const programName = enrollment.program.name.toLowerCase();
+    const programName = enrollment.health_program.name.toLowerCase();
     const search = searchQuery.toLowerCase();
     
     return clientName.includes(search) || programName.includes(search);
   });
+
+  const getStatusVariant = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'default';
+      case 'completed':
+        return 'success';
+      case 'cancelled':
+        return 'destructive';
+      case 'suspended':
+        return 'warning';
+      default:
+        return 'secondary';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -87,12 +112,18 @@ const Enrollments = () => {
           <Button 
             variant="ghost" 
             className="mr-4 text-slate-300 hover:text-white"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <h1 className="text-3xl font-bold text-white">Program Enrollments</h1>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200">
+            {error}
+          </div>
+        )}
 
         {/* Search */}
         <div className="mb-6">
@@ -110,59 +141,85 @@ const Enrollments = () => {
         {/* Enrollments List */}
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-pulse text-sky-400">Loading...</div>
+            <div className="animate-pulse text-sky-400">Loading enrollments...</div>
           </div>
         ) : (
-          <>
-            {filteredEnrollments.length > 0 ? (
-              <div className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-slate-700/50">
-                      <TableHead className="text-slate-300 font-medium">Client Name</TableHead>
-                      <TableHead className="text-slate-300 font-medium">Program</TableHead>
-                      <TableHead className="text-slate-300 font-medium">Enrollment Date</TableHead>
-                      <TableHead className="text-slate-300 font-medium">Status</TableHead>
+          <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Client Name</TableHead>
+                  <TableHead>Program</TableHead>
+                  <TableHead>Enrollment Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredEnrollments.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-slate-400">
+                      {searchQuery
+                        ? "No enrollments match your search."
+                        : "No enrollments found."}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredEnrollments.map((enrollment) => (
+                    <TableRow key={enrollment.id}>
+                      <TableCell className="font-medium text-white">
+                        {enrollment.client ? `${enrollment.client.first_name} ${enrollment.client.last_name}` : "Unknown Client"}
+                      </TableCell>
+                      <TableCell className="text-slate-300">
+                        {enrollment.health_program?.name || "Unknown Program"}
+                      </TableCell>
+                      <TableCell className="text-slate-300">
+                        {new Date(enrollment.enrollment_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusVariant(enrollment.status)}>
+                          {enrollment.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-400 hover:text-red-300"
+                          onClick={() => setEnrollmentToDelete(enrollment)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredEnrollments.map((enrollment) => (
-                      <TableRow 
-                        key={enrollment.id} 
-                        className="hover:bg-slate-700/50 cursor-pointer"
-                        onClick={() => navigate(`/clients/${enrollment.client.id}`)}
-                      >
-                        <TableCell className="font-medium text-white">
-                          {enrollment.client.first_name} {enrollment.client.last_name}
-                        </TableCell>
-                        <TableCell className="text-slate-300">
-                          {enrollment.program.name}
-                        </TableCell>
-                        <TableCell className="text-slate-300">
-                          {new Date(enrollment.enrollment_date).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={enrollment.status === "Active" ? "default" : "secondary"}>
-                            {enrollment.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-slate-800 rounded-lg border border-slate-700">
-                <p className="text-slate-300">
-                  {searchQuery
-                    ? "No enrollments match your search."
-                    : "No enrollments found. Enroll clients in programs to see them here."}
-                </p>
-              </div>
-            )}
-          </>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!enrollmentToDelete} onOpenChange={() => setEnrollmentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove the enrollment from the program. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => enrollmentToDelete && handleDelete(enrollmentToDelete.id)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
