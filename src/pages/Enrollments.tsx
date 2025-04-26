@@ -80,11 +80,11 @@ const Enrollments = () => {
       case 'active':
         return 'default';
       case 'completed':
-        return 'success';
+        return 'secondary';
       case 'cancelled':
         return 'destructive';
       case 'suspended':
-        return 'warning';
+        return 'secondary';
       default:
         return 'secondary';
     }

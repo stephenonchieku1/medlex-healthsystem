@@ -135,8 +135,8 @@ export interface Client {
   contact_number: string;
   email: string;
   address: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Enrollment {
@@ -145,8 +145,8 @@ export interface Enrollment {
   health_program_id: string;
   enrollment_date: string;
   status: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   client?: Client;
   health_program?: HealthProgram;
 }
