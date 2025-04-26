@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
+import { Alert, AlertDescription } from "../../components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,9 +12,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import { AlertCircle } from "lucide-react";
-import { getHealthPrograms, HealthProgram } from "@/services/api";
+import { getHealthPrograms, HealthProgram } from "../../services/api";
 
 interface EnrollmentFormProps {
   clientId: string;
