@@ -1,40 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# MedLex Health System
+
+A comprehensive health information system for managing clients and health programs/services.
+
+## Features
+
+1. **Health Program Management**
+   - Create and manage health programs (TB, Malaria, HIV, etc.)
+   - View program details and enrollment statistics
+   - Update program information
+
+2. **Client Management**
+   - Register new clients with detailed information
+   - Search for clients using various criteria
+   - View client profiles and history
+   - Update client information
+
+3. **Program Enrollment**
+   - Enroll clients in health programs
+   - Track enrollment status and history
+   - View client's enrolled programs
+
+4. **API Integration**
+   - RESTful API for all operations
+   - Secure authentication and authorization
+   - Comprehensive documentation
+
+## Tech Stack
+
+### Backend
+- Ruby on Rails
+- PostgreSQL database
+- JWT authentication
+- RSpec for testing
+
+### Frontend
+- React with TypeScript
+- Tailwind CSS for styling
+- Axios for API calls
+- React Query for data management
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Ruby 3.x
+- Node.js 16.x
+- PostgreSQL
 
+### Backend Setup
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd medlex-healths
+bundle install
+rails db:create db:migrate
+rails server
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Frontend Setup
+```bash
+cd medlex-healthsystem
+npm install
+npm run dev
+```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## API Documentation
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Health Programs
+- `GET /api/v1/health_programs` - List all programs
+- `GET /api/v1/health_programs/:id` - Get program details
+- `POST /api/v1/health_programs` - Create new program
+- `PUT /api/v1/health_programs/:id` - Update program
+- `DELETE /api/v1/health_programs/:id` - Delete program
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### Clients
+- `GET /api/v1/clients` - List all clients
+- `GET /api/v1/clients/:id` - Get client details
+- `POST /api/v1/clients` - Register new client
+- `PUT /api/v1/clients/:id` - Update client
+- `GET /api/v1/clients/search?q=:query` - Search clients
+- `GET /api/v1/clients/:id/enrollments` - Get client's program enrollments
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Enrollments
+- `POST /api/v1/enrollments` - Enroll client in program
+- `PUT /api/v1/enrollments/:id` - Update enrollment status
+- `GET /api/v1/enrollments/:id` - Get enrollment details
 
-## Learn More
+## Security Features
+- JWT-based authentication
+- Role-based access control
+- Input validation and sanitization
+- CORS configuration
+- Rate limiting
 
-To learn more about Next.js, take a look at the following resources:
+## Testing
+```bash
+# Backend tests
+cd medlex-healths
+bundle exec rspec
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+# Frontend tests
+cd medlex-healthsystem
+npm test
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
+The application can be deployed using:
+- Heroku for backend
+- Vercel/Netlify for frontend
+- AWS/GCP for production
 
-## Deploy on Vercel
+## Contributing
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## License
+This project is licensed under the MIT License.
