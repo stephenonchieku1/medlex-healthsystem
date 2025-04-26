@@ -11,6 +11,10 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts: [
+      'medlex-healthsystem-frontend.onrender.com',
+      'localhost',
+    ],
     port: 3000,
     host: true
   }
