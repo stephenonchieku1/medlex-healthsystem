@@ -100,7 +100,15 @@ bundle exec rspec
 cd medlex-healthsystem
 npm test
 ```
-
+image.png
+image.png
+image.png
+image.png
+image.png
+image.png
+image.png
+image.png
+image.png
 ## Deployment
 The application can be deployed using:
 - Heroku for backend
