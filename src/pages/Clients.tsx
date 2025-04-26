@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,19 +12,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import ClientForm from "@/components/clients/ClientForm";
-
-// Define Client type
-type Client = {
-  id: number;
-  first_name: string;
-  last_name: string;
-  date_of_birth: string;
-  gender: string;
-  contact_number?: string;
-  email?: string;
-  address?: string;
-  created_at: string;
-};
+import { getClients, createClient, Client } from "@/services/api";
 
 const Clients = () => {
   const navigate = useNavigate();
@@ -33,21 +20,19 @@ const Clients = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch clients from API
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        // Replace with your actual API endpoint
-        const response = await fetch("http://localhost:4000/api/v1/clients");
-        if (!response.ok) {
-          throw new Error("Failed to fetch clients");
-        }
-        const data = await response.json();
+        const data = await getClients();
         setClients(data);
         setIsLoading(false);
+        setError(null);
       } catch (error) {
         console.error("Error fetching clients:", error);
+        setError("Failed to load clients");
         setIsLoading(false);
       }
     };
@@ -63,25 +48,15 @@ const Clients = () => {
   );
 
   // Handle client creation
-  const handleCreateClient = async (clientData: Omit<Client, 'id' | 'created_at'>) => {
+  const handleCreateClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const response = await fetch("http://localhost:4000/api/v1/clients", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(clientData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create client");
-      }
-
-      const newClient = await response.json();
-      setClients([...clients, newClient]);
+      const newClient = await createClient(clientData);
+      setClients(prevClients => [...prevClients, newClient]);
       setShowForm(false);
+      setError(null);
     } catch (error) {
       console.error("Error creating client:", error);
+      setError("Failed to create client");
     }
   };
 
@@ -114,6 +89,12 @@ const Clients = () => {
           <h1 className="text-3xl font-bold text-white">Client Registry</h1>
         </div>
 
+        {error && (
+          <div className="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200">
+            {error}
+          </div>
+        )}
+
         {/* Search and Create */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div className="relative w-full sm:w-1/2">
@@ -144,55 +125,47 @@ const Clients = () => {
         {/* Clients List */}
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-pulse text-sky-400">Loading...</div>
+            <div className="animate-pulse text-sky-400">Loading clients...</div>
           </div>
         ) : (
-          <>
-            {filteredClients.length > 0 ? (
-              <div className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-slate-700/50">
-                      <TableHead className="text-slate-300 font-medium">Name</TableHead>
-                      <TableHead className="text-slate-300 font-medium">Gender</TableHead>
-                      <TableHead className="text-slate-300 font-medium">Date of Birth</TableHead>
-                      <TableHead className="text-slate-300 font-medium">Contact</TableHead>
+          <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Gender</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Email</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredClients.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-slate-400">
+                      {searchQuery
+                        ? "No clients match your search."
+                        : "No clients found. Register a new client to get started."}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredClients.map((client) => (
+                    <TableRow 
+                      key={client.id} 
+                      className="hover:bg-slate-700/50 cursor-pointer"
+                      onClick={() => navigate(`/clients/${client.id}`)}
+                    >
+                      <TableCell className="font-medium text-white">
+                        {client.first_name} {client.last_name}
+                      </TableCell>
+                      <TableCell className="text-slate-300">{client.gender}</TableCell>
+                      <TableCell className="text-slate-300">{client.contact_number || "Not provided"}</TableCell>
+                      <TableCell className="text-slate-300">{client.email || "Not provided"}</TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredClients.map((client) => (
-                      <TableRow 
-                        key={client.id} 
-                        className="hover:bg-slate-700/50 cursor-pointer"
-                        onClick={() => navigate(`/clients/${client.id}`)}
-                      >
-                        <TableCell className="font-medium text-white">
-                          {client.first_name} {client.last_name}
-                        </TableCell>
-                        <TableCell className="text-slate-300">
-                          {client.gender}
-                        </TableCell>
-                        <TableCell className="text-slate-300">
-                          {new Date(client.date_of_birth).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell className="text-slate-400">
-                          {client.contact_number || client.email || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-slate-800 rounded-lg border border-slate-700">
-                <p className="text-slate-300">
-                  {searchQuery
-                    ? "No clients match your search."
-                    : "No clients found. Register your first client!"}
-                </p>
-              </div>
-            )}
-          </>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </main>
     </div>
