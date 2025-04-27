@@ -2,6 +2,10 @@
 
 A comprehensive health information system for managing clients and health programs/services.
 
+Link to backend repository :
+```bash
+https://github.com/stephenonchieku1/medlex-healthsystem-backend
+```
 ## Features
 
 1. **Health Program Management**
@@ -30,7 +34,6 @@ A comprehensive health information system for managing clients and health progra
 ### Backend
 - Ruby on Rails
 - PostgreSQL database
-- JWT authentication
 - RSpec for testing
 
 ### Frontend
@@ -115,7 +118,7 @@ image.png![Screenshot 2025-04-27 005025](https://github.com/user-attachments/ass
 
 ## Deployment
 The application can be deployed using:
-- Heroku for backend
+- Heroku/render for backend
 - Vercel/Netlify for frontend
 - AWS/GCP for production
 
@@ -128,4 +131,4 @@ The application can be deployed using:
 
 ## License
 This project is licensed under the MIT License.
-![Screenshot 2025-04-27 004909](https://github.com/user-attachments/assets/c07e87f8-aa6a-4f5e-bff3-55cbababb086)
+
