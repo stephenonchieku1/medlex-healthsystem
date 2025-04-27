@@ -1,6 +1,7 @@
 # MedLex Health System
 
 A comprehensive health information system for managing clients and health programs/services.
+Presentation slides Link : https://docs.google.com/presentation/d/1SoC5yrOK08Xu1R6m7F8dOVeLvX-eqckAJy5IKl8QXbY/edit?usp=sharing
 
 ## Features
 
@@ -109,6 +110,7 @@ image.png
 image.png
 image.png
 image.png
+
 ## Deployment
 The application can be deployed using:
 - Heroku for backend
