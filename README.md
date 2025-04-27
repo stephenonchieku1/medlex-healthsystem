@@ -100,7 +100,9 @@ bundle exec rspec
 cd medlex-healthsystem
 npm test
 ```
-![Screenshot 2025-04-27 004717](https://github.com/user-attachments/assets/4609dfcb-cbfa-492b-b518-b398303d2d2f)
+
+
+![med1](https://github.com/user-attachments/assets/de4ca739-d09b-4038-afcb-35c80d4dbf59)
 ![Screenshot 2025-04-27 004909](https://github.com/user-attachments/assets/88ef57ed-6cfb-4571-ae2c-70a1c64f4451)
 image.png![Screenshot 2025-04-27 005025](https://github.com/user-attachments/assets/d1780260-7e76-427b-84f2-5cd690542d12)
 ![Screenshot 2025-04-27 005052](https://github.com/user-attachments/assets/f4de8938-8999-44bd-91d0-b4d07eb9eb9f)
