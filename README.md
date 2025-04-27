@@ -3,6 +3,10 @@
 A comprehensive health information system for managing clients and health programs/services.
 Presentation slides Link : https://docs.google.com/presentation/d/1SoC5yrOK08Xu1R6m7F8dOVeLvX-eqckAJy5IKl8QXbY/edit?usp=sharing
 
+Link to backend repository :
+```bash
+https://github.com/stephenonchieku1/medlex-healthsystem-backend
+```
 ## Features
 
 1. **Health Program Management**
@@ -31,7 +35,6 @@ Presentation slides Link : https://docs.google.com/presentation/d/1SoC5yrOK08Xu1
 ### Backend
 - Ruby on Rails
 - PostgreSQL database
-- JWT authentication
 - RSpec for testing
 
 ### Frontend
@@ -101,19 +104,22 @@ bundle exec rspec
 cd medlex-healthsystem
 npm test
 ```
-image.png
-image.png
-image.png
-image.png
-image.png
-image.png
-image.png
-image.png
-image.png
+
+
+![med1](https://github.com/user-attachments/assets/de4ca739-d09b-4038-afcb-35c80d4dbf59)
+![Screenshot 2025-04-27 004909](https://github.com/user-attachments/assets/88ef57ed-6cfb-4571-ae2c-70a1c64f4451)
+image.png![Screenshot 2025-04-27 005025](https://github.com/user-attachments/assets/d1780260-7e76-427b-84f2-5cd690542d12)
+![Screenshot 2025-04-27 005052](https://github.com/user-attachments/assets/f4de8938-8999-44bd-91d0-b4d07eb9eb9f)
+![Screenshot 2025-04-27 005122](https://github.com/user-attachments/assets/027f6e54-d435-49b1-8821-4f8fec16dfd2)
+![Screenshot 2025-04-27 005250](https://github.com/user-attachments/assets/ee82bfd5-7f0e-4746-885a-80397099bea0)
+![Screenshot 2025-04-27 005315](https://github.com/user-attachments/assets/71d63eb4-c259-4f62-ac14-b5576b546437)
+![Screenshot 2025-04-27 005518](https://github.com/user-attachments/assets/6abf0a14-4836-4f70-84a9-189f4fb61761)
+![Screenshot 2025-04-27 005619](https://github.com/user-attachments/assets/c2bc642b-8262-40ad-b34a-c642207a47a3)
+![Screenshot 2025-04-27 005648](https://github.com/user-attachments/assets/ed28a0af-c14b-4d54-b6b4-233e3d255abd)
 
 ## Deployment
 The application can be deployed using:
-- Heroku for backend
+- Heroku/render for backend
 - Vercel/Netlify for frontend
 - AWS/GCP for production
 
@@ -126,3 +132,4 @@ The application can be deployed using:
 
 ## License
 This project is licensed under the MIT License.
+
